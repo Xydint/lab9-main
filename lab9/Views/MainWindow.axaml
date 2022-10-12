@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:lab9.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:lab9.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="lab9.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="lab9">
+	<Window.Styles>
+		<Style Selector="Button.button">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+			<Setter Property="Background" Value="White"/>
+		</Style>
+		<Style Selector="Button.button2">
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="IsEnabled" Value="{Binding CarouselButtonsEnabled}"/>
+		</Style>
+		<Style Selector="ItemsControl.itemscontrol">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+		</Style>
+		<Style Selector="StackPanel.stackpanel">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+			<Setter Property="IsEnabled" Value="{Binding FilesViewEnabled}"/>
+		</Style>
+		<Style Selector="TextBlock.textblock">
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+		</Style>
+		<Style Selector="TreeView.treeview">
+			<Setter Property="HorizontalAlignment" Value="Stretch"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+		</Style>
+	</Window.Styles>
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+
+	<Grid ColumnDefinitions="*,*">
+		<TreeView Grid.Column="0" Name="Tree" Classes="treeview" Items="{Binding Items}">
+			<TreeView.DataTemplates>
+				<TreeDataTemplate DataType="{x:Type models:DirectoryItem}"
+										  ItemsSource="{Binding Items}">
+					<TextBlock Classes="textblock" Text="{Binding Name}"/>
+				</TreeDataTemplate>
+				<DataTemplate DataType="{x:Type models:FileItem}">
+					<Grid ColumnDefinitions="*">
+						<Button Grid.Column="0" Classes="button" Content="{Binding Name}"
+								Command="{Binding $parent[TreeView].DataContext.SelectDirectory}"
+								CommandParameter="{Binding}"/>
+					</Grid>
+				</DataTemplate>
+			</TreeView.DataTemplates>
+		</TreeView>
+		<Grid Grid.Column="1" ColumnDefinitions="11*,100*,11*">
+			<Button Grid.Column="0" Classes="button2" HorizontalAlignment="Left" Content="Back"
+					Command="{Binding Button_Back}"/>
+			<Carousel Grid.Column="1" Items="{Binding SelectedImages}" SelectedIndex="{Binding ChosenIndex}">
+				<Carousel.DataTemplates>
+					<DataTemplate>
+						<Image Source="{Binding ImageBitmap}">
+							<ToolTip.Tip>
+								<TextBlock Classes="textblock" Text="{Binding Path}"/>
+							</ToolTip.Tip>
+						</Image>
+					</DataTemplate>
+				</Carousel.DataTemplates>
+			</Carousel>
+			<Button Grid.Column="2" Classes="button2" HorizontalAlignment="Right" Content="Next"
+					Command="{Binding Button_Next}"/>
+		</Grid>
+	</Grid>
+</Window>
